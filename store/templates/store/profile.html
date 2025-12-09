@@ -1,0 +1,126 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Profile - FitPower Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">My Profile</h1>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Account Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                    <p><strong>Member since:</strong> {{ user.date_joined|date:"F Y" }}</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    {% if orders %}
+                    <ul class="list-group list-group-flush">
+                        {% for order in orders|slice:":3" %}
+                        <li class="list-group-item">
+                            <a href="{% url 'order_summary' order.id %}" class="text-decoration-none">
+                                <strong>Order #{{ order.order_number }}</strong><br>
+                                <small class="text-muted">{{ order.created_at|date:"M d, Y" }} - ${{ order.total_amount }}</small>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="mt-2 text-center">
+                        <a href="{% url 'order_history' %}" class="btn btn-sm btn-outline-success">
+                            View All Orders
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">No orders yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Edit Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                <div class="text-danger">{{ form.phone.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Date of Birth</label>
+                                {{ form.date_of_birth }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Gender</label>
+                                {{ form.gender }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Fitness Goal</label>
+                                {{ form.fitness_goal }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Height (cm)</label>
+                                {{ form.height }}
+                                {% if form.height.errors %}
+                                <div class="text-danger">{{ form.height.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Weight (kg)</label>
+                                {{ form.weight }}
+                                {% if form.weight.errors %}
+                                <div class="text-danger">{{ form.weight.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label class="form-label">Address</label>
+                                {{ form.address }}
+                                {% if form.address.errors %}
+                                <div class="text-danger">{{ form.address.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}

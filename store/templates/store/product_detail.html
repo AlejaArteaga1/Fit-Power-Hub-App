@@ -1,0 +1,234 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ product.name }} - FitFuel Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Store</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if product.image and product.image.url %}
+                    <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}"
+                        style="max-height: 400px;">
+                    {% else %}
+                    <!-- Imagen por categoría -->
+                    {% if product.category == 'SUP' %}
+                    <img src="https://69372ddd5e1b4138a35800c9.imgix.net/png-transparent-dietary-supplement-bodybuilding-supplement-personal-trainer-nutrition-bodybuilding-physical-fitness-we.png"
+                        class="img-fluid rounded" alt="Supplement">
+                    {% elif product.category == 'CLO' %}
+                    <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200&q=80"
+                        class="img-fluid rounded" alt="Clothing">
+                    {% elif product.category == 'EQU' %}
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80"
+                        class="img-fluid rounded" alt="Equipment">
+                    {% elif product.category == 'FOO' %}
+                    <img src="https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80"
+                        class="img-fluid rounded" alt="Healthy Food">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80"
+                        class="img-fluid rounded" alt="Fitness product">
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">{{ product.name }}</h1>
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary">{{ product.get_category_display }}</span>
+                        {% if product.main_category %}
+                        <span class="badge bg-secondary">{{ product.main_category.name }}</span>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="text-primary mb-4">${{ product.price }}</h3>
+
+                    <p class="card-text">{{ product.description }}</p>
+
+                    <!-- Nutritional Info -->
+                    {% if product.protein_per_serving %}
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Nutritional Information (per serving)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3 text-center">
+                                    <div class="p-2 bg-info text-white rounded">
+                                        <strong>{{ product.protein_per_serving }}g</strong>
+                                        <div class="small">Protein</div>
+                                    </div>
+                                </div>
+                                <div class="col-3 text-center">
+                                    <div class="p-2 bg-success text-white rounded">
+                                        <strong>{{ product.carbs_per_serving }}g</strong>
+                                        <div class="small">Carbs</div>
+                                    </div>
+                                </div>
+                                <div class="col-3 text-center">
+                                    <div class="p-2 bg-warning text-white rounded">
+                                        <strong>{{ product.fat_per_serving }}g</strong>
+                                        <div class="small">Fat</div>
+                                    </div>
+                                </div>
+                                <div class="col-3 text-center">
+                                    <div class="p-2 bg-danger text-white rounded">
+                                        <strong>{{ product.calories_per_serving }}</strong>
+                                        <div class="small">Calories</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Stock Information -->
+                    <div class="mb-4">
+                        {% if product.stock > 0 %}
+                        <p class="text-success"><i class="fas fa-check-circle"></i> In stock: {{ product.stock }} units
+                            available</p>
+                        {% else %}
+                        <p class="text-danger"><i class="fas fa-times-circle"></i> Out of stock</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Add to Cart Form -->
+                    {% if product.stock > 0 %}
+                    <form method="post" action="{% url 'add_to_cart' product.id %}" class="mb-4">
+                        {% csrf_token %}
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="quantity" class="col-form-label">Quantity:</label>
+                            </div>
+                            <div class="col-auto">
+                                <div class="input-group" style="width: 120px;">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="decreaseQuantity()">-</button>
+                                    <input type="number" id="quantity" name="quantity" class="form-control text-center"
+                                        value="1" min="1" max="{{ product.stock }}">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="increaseQuantity()">+</button>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-warning btn-lg">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> This product is currently out of stock.
+                    </div>
+                    {% endif %}
+
+                    <!-- Product Meta -->
+                    <div class="mt-4 text-muted small">
+                        <p class="mb-1">Product ID: {{ product.id }}</p>
+                        <p class="mb-0">Added: {{ product.created_at|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Products -->
+    {% if recommended_products %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Recommended Products</h3>
+            <div class="row">
+                {% for product in recommended_products %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                        {% else %}
+                        <!-- Imagen por categoría -->
+                        {% if product.category == 'SUP' %}
+                        <img src="https://images.unsplash.com/photo-1594736797933-d3d5351e2595?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200&q=80"
+                            class="card-img-top product-image" alt="Supplement">
+                        {% elif product.category == 'CLO' %}
+                        <img src="https://images.unsplash.com/photo-1591369822093-28755df3d642?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200&q=80"
+                            class="card-img-top product-image" alt="Clothing">
+                        {% elif product.category == 'EQU' %}
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200&q=80"
+                            class="card-img-top product-image" alt="Equipment">
+                        {% elif product.category == 'FOO' %}
+                        <img src="https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200&q=80"
+                            class="card-img-top product-image" alt="Healthy Food">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&h=200&q=80"
+                            class="card-img-top product-image" alt="Fitness product">
+                        {% endif %}
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name|truncatechars:30 }}</h5>
+                            <p class="card-text text-muted small">{{ product.description|truncatechars:60 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 text-primary mb-0">${{ product.price }}</span>
+                                <a href="{% url 'product_detail' product.id %}"
+                                    class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+    function increaseQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var max = parseInt(quantityInput.max);
+        var current = parseInt(quantityInput.value);
+        if (current < max) {
+            quantityInput.value = current + 1;
+        }
+    }
+
+    function decreaseQuantity() {
+        var quantityInput = document.getElementById('quantity');
+        var min = parseInt(quantityInput.min);
+        var current = parseInt(quantityInput.value);
+        if (current > min) {
+            quantityInput.value = current - 1;
+        }
+    }
+
+    // Validate quantity on change
+    document.getElementById('quantity').addEventListener('change', function () {
+        var value = parseInt(this.value);
+        var max = parseInt(this.max);
+        var min = parseInt(this.min);
+
+        if (value < min) {
+            this.value = min;
+        } else if (value > max) {
+            this.value = max;
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

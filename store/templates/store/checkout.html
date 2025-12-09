@@ -1,0 +1,125 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Checkout - FitPower Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Checkout</h1>
+    
+    <div class="row">
+        <!-- Order Summary -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Items in your cart:</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for item in cart_items %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ item.product.name }} x{{ item.quantity }}</span>
+                            <span>${{ item.total_price }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal:</span>
+                            <span>${{ cart.total_price }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Shipping:</span>
+                            <span>$10.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Total:</span>
+                            <span>${{ cart.total_price|add:10 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <a href="{% url 'cart' %}" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Cart
+                </a>
+            </div>
+        </div>
+        
+        <!-- Checkout Form -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Shipping Information</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Shipping Address *</label>
+                            {{ form.shipping_address }}
+                            {% if form.shipping_address.errors %}
+                            <div class="text-danger">{{ form.shipping_address.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Billing Address *</label>
+                            {{ form.billing_address }}
+                            {% if form.billing_address.errors %}
+                            <div class="text-danger">{{ form.billing_address.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.same_as_shipping }}
+                            <label class="form-check-label">{{ form.same_as_shipping.label }}</label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Order Notes (Optional)</label>
+                            {{ form.notes }}
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 
+                            You will be redirected to complete payment after submitting this form.
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-lock me-2"></i> Complete Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Auto-fill billing address when checkbox is checked
+    $('#id_same_as_shipping').change(function() {
+        if ($(this).is(':checked')) {
+            var shippingAddress = $('#id_shipping_address').val();
+            $('#id_billing_address').val(shippingAddress);
+        }
+    });
+    
+    // Copy shipping address to billing address on change
+    $('#id_shipping_address').on('input', function() {
+        if ($('#id_same_as_shipping').is(':checked')) {
+            $('#id_billing_address').val($(this).val());
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

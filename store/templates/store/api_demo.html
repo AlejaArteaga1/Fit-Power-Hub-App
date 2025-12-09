@@ -1,0 +1,220 @@
+{% extends 'store/base.html' %}
+
+{% block title %}API Demo - FitPower Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-code"></i> Django REST Framework API Demo</h4>
+                </div>
+                <div class="card-body">
+                    <p>This page demonstrates the use of <strong>Django REST Framework</strong> to create a RESTful API
+                        for our fitness store.</p>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Note:</strong> This API is built with Django REST Framework and follows REST
+                        conventions.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">API Endpoints</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <strong>GET</strong>
+                                            <a href="/store/api/products/" target="_blank" class="text-decoration-none">
+                                                <code>/store/api/products/</code>
+                                            </a>
+                                            <br><small class="text-muted">List all products (with pagination)</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>GET</strong>
+                                            <a href="/store/api/products/1/" target="_blank"
+                                                class="text-decoration-none">
+                                                <code>/store/api/products/{id}/</code>
+                                            </a>
+                                            <br><small class="text-muted">Get specific product details</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>GET</strong>
+                                            <a href="/store/api/categories/" target="_blank"
+                                                class="text-decoration-none">
+                                                <code>/store/api/categories/</code>
+                                            </a>
+                                            <br><small class="text-muted">List all categories</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>GET</strong>
+                                            <a href="/store/api/stats/" target="_blank" class="text-decoration-none">
+                                                <code>/store/api/stats/</code>
+                                            </a>
+                                            <br><small class="text-muted">Product statistics</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>GET</strong>
+                                            <code>/store/api/products/search/?q=protein</code>
+                                            <br><small class="text-muted">Search products</small>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>GET</strong>
+                                            <code>/store/api/products/by_category/?category=SUP</code>
+                                            <br><small class="text-muted">Filter by category</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Try API Live</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Endpoint:</label>
+                                        <select class="form-select" id="apiEndpoint">
+                                            <option value="/store/api/products/">Products List</option>
+                                            <option value="/store/api/categories/">Categories List</option>
+                                            <option value="/store/api/stats/">Statistics</option>
+                                            <option value="/store/api/products/search/?q=protein">Search "protein"
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <button class="btn btn-primary w-100 mb-3" id="fetchApi">
+                                        <i class="fas fa-download"></i> Fetch API Data
+                                    </button>
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="prettyJson">
+                                        <label class="form-check-label" for="prettyJson">
+                                            Pretty JSON Format
+                                        </label>
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <h6>Response:</h6>
+                                        <pre id="apiResponse" class="bg-light p-3 rounded"
+                                            style="max-height: 300px; overflow: auto; font-size: 0.85rem;">
+Click "Fetch API Data" to see response here...
+                                        </pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0"><i class="fas fa-cogs"></i> API Features</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6><i class="fas fa-filter text-primary me-2"></i> Filtering</h6>
+                                            <p class="small">Filter products by category, price range, and more using
+                                                query parameters.</p>
+                                            <code
+                                                class="d-block small">/api/products/?category=SUP&min_price=10&max_price=100</code>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6><i class="fas fa-search text-success me-2"></i> Search</h6>
+                                            <p class="small">Full-text search across product names and descriptions.</p>
+                                            <code class="d-block small">/api/products/search/?q=whey+protein</code>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6><i class="fas fa-sort text-info me-2"></i> Sorting</h6>
+                                            <p class="small">Sort results by price, name, or creation date.</p>
+                                            <code class="d-block small">/api/products/?ordering=price</code>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <h6><i class="fas fa-file-alt text-danger me-2"></i> Pagination</h6>
+                                            <p class="small">Automatic pagination with 10 items per page.</p>
+                                            <code class="d-block small">/api/products/?page=2</code>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6><i class="fas fa-shield-alt text-purple me-2"></i> Authentication</h6>
+                                            <p class="small">Protected endpoints for user-specific data like orders.</p>
+                                            <code class="d-block small">/api/orders/ (requires login)</code>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6><i class="fas fa-chart-bar text-teal me-2"></i> Statistics</h6>
+                                            <p class="small">Analytics endpoints for business intelligence.</p>
+                                            <code class="d-block small">/api/stats/</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        $('#fetchApi').click(function () {
+            const endpoint = $('#apiEndpoint').val();
+            const pretty = $('#prettyJson').is(':checked');
+
+            $('#apiResponse').html('<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Fetching data...</p></div>');
+
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    let formattedData;
+                    if (pretty) {
+                        formattedData = JSON.stringify(data, null, 2);
+                    } else {
+                        formattedData = JSON.stringify(data);
+                    }
+                    $('#apiResponse').text(formattedData);
+                })
+                .catch(error => {
+                    $('#apiResponse').text('Error fetching data: ' + error);
+                });
+        });
+
+        // Fetch some data on page load
+        $('#fetchApi').click();
+    });
+</script>
+
+<style>
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    code {
+        color: #e83e8c;
+        background-color: #f8f9fa;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+
+    .card-header {
+        font-weight: 600;
+    }
+
+    .list-group-item {
+        border: none;
+        padding-left: 0;
+        padding-right: 0;
+    }
+</style>
+{% endblock %}

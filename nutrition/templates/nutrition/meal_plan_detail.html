@@ -1,0 +1,115 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ meal_plan.name }} - FitFuel Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'meal_planner' %}">Nutrition</a></li>
+            <li class="breadcrumb-item active">{{ meal_plan.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ meal_plan.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Plan Details</h5>
+                            <table class="table">
+                                <tr>
+                                    <th>Goal:</th>
+                                    <td><span class="badge bg-info">{{ meal_plan.get_goal_display }}</span></td>
+                                </tr>
+                                <tr>
+                                    <th>Activity Level:</th>
+                                    <td>{{ meal_plan.get_activity_level_display }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Age:</th>
+                                    <td>{{ meal_plan.age }} years</td>
+                                </tr>
+                                <tr>
+                                    <th>Weight:</th>
+                                    <td>{{ meal_plan.weight }} kg</td>
+                                </tr>
+                                <tr>
+                                    <th>Height:</th>
+                                    <td>{{ meal_plan.height }} cm</td>
+                                </tr>
+                                <tr>
+                                    <th>Created:</th>
+                                    <td>{{ meal_plan.created_at|date:"F d, Y" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5>Calculated Values</h5>
+                            {% if macros %}
+                            <div class="row text-center mb-4">
+                                <div class="col-4">
+                                    <div class="p-3 bg-info text-white rounded">
+                                        <h4>{{ meal_plan.bmr|floatformat:0 }}</h4>
+                                        <small>BMR</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-success text-white rounded">
+                                        <h4>{{ meal_plan.tdee|floatformat:0 }}</h4>
+                                        <small>TDEE</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-warning text-white rounded">
+                                        <h4>{{ meal_plan.target_calories|floatformat:0 }}</h4>
+                                        <small>Target</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6>Daily Macronutrients:</h6>
+                            <div class="progress mb-2" style="height: 30px;">
+                                <div class="progress-bar bg-info"
+                                    style="width: {{ meal_plan.protein_ratio|multiply:100 }}%">
+                                    Protein: {{ macros.protein }}g
+                                </div>
+                                <div class="progress-bar bg-success"
+                                    style="width: {{ meal_plan.carbs_ratio|multiply:100 }}%">
+                                    Carbs: {{ macros.carbs }}g
+                                </div>
+                                <div class="progress-bar bg-warning"
+                                    style="width: {{ meal_plan.fat_ratio|multiply:100 }}%">
+                                    Fat: {{ macros.fat }}g
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <p><strong>Protein:</strong> {{ macros.protein }}g ({{ macros.protein_calories }} cal)
+                                </p>
+                                <p><strong>Carbs:</strong> {{ macros.carbs }}g ({{ macros.carbs_calories }} cal)</p>
+                                <p><strong>Fat:</strong> {{ macros.fat }}g ({{ macros.fat_calories }} cal)</p>
+                            </div>
+                            {% else %}
+                            <p class="text-muted">No calculations available for this plan.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'meal_planner' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Plans
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

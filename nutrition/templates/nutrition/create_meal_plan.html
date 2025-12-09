@@ -1,0 +1,97 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Create Meal Plan - FitFuel Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create New Meal Plan</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Plan Name</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="text-danger">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Goal</label>
+                                {{ form.goal }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Activity Level</label>
+                                {{ form.activity_level }}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Age</label>
+                                {{ form.age }}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Weight (kg)</label>
+                                {{ form.weight }}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Height (cm)</label>
+                                {{ form.height }}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Protein Ratio</label>
+                                {{ form.protein_ratio }}
+                                <small class="text-muted">Recommended: 0.3-0.4</small>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Carbs Ratio</label>
+                                {{ form.carbs_ratio }}
+                                <small class="text-muted">Recommended: 0.4-0.5</small>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label">Fat Ratio</label>
+                                {{ form.fat_ratio }}
+                                <small class="text-muted">Recommended: 0.2-0.3</small>
+                            </div>
+                        </div>
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger mt-3">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Save Meal Plan
+                            </button>
+                            <a href="{% url 'meal_planner' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Add some styling for form inputs */
+.form-control, .form-select {
+    margin-bottom: 10px;
+}
+</style>
+{% endblock %}
